@@ -10,7 +10,7 @@ import {
   MdLightMode,
   MdMenu,
 } from "react-icons/md";
-import { useColorScheme } from "../../contexts/ColorScheme";
+import { useColorScheme } from "@/contexts/ColorScheme";
 
 type MenuItem = {
   label: string;
