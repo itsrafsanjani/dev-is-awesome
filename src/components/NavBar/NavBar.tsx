@@ -61,8 +61,8 @@ const NavBar = () => {
   return (
     <>
       {/* NavBar */}
-      <nav className="h-14 w-full border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 items-center flex px-4 lg:px-8 xl:px-12 gap-6">
-        <div className="flex-1 justify-start gap-4 flex items-center">
+      <nav className="h-14 w-full border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 items-center flex px-4 lg:px-8 xl:px-12 gap-6 sticky top-0 left-0 right-0 z-30">
+        <div className="flex-1 justify-start gap-4 flex items-center overflow-hidden">
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setShowSidebar(true)}
@@ -73,7 +73,7 @@ const NavBar = () => {
 
           {/* Navbar Logo */}
           <Link href={`/`}>
-            <a className="text-lg font-bold uppercase">{TITLE}</a>
+            <a className="text-lg font-bold uppercase truncate">{TITLE}</a>
           </Link>
         </div>
 
@@ -129,72 +129,58 @@ const NavBar = () => {
       </nav>
 
       {/* SideBar */}
-      <div
-        className={classNames("fixed inset-0 z-30", {
-          "pointer-events-none": !showSidebar,
-        })}
-      >
-        {/* Overlay */}
-        <div
-          className={classNames("absolute inset-0", {
-            "backdrop-blur-md bg-black/50": showSidebar,
-            "backdrop-blur-none bg-black/0": !showSidebar,
-          })}
-          onClick={() => setShowSidebar(false)}
-        />
-        {/* Drawer */}
-        <div
-          className={classNames(
-            "absolute top-0 bottom-0 w-80 max-w-[100%] bg-white dark:bg-gray-900 z-10",
-            {
-              "left-0": showSidebar,
-              "-left-80": !showSidebar,
-            }
-          )}
-        >
-          <div className="h-14 border-b bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 items-center flex px-4">
-            <Link href={`/`}>
-              <a
-                className="text-lg font-bold uppercase w-full flex-1"
+      {showSidebar && (
+        <div className="fixed inset-0 z-30">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-gray-300/50 dark:bg-gray-900/50 backdrop-blur-sm"
+            onClick={() => setShowSidebar(false)}
+          />
+          {/* Drawer */}
+          <div className="absolute top-0 bottom-0 left-0 w-80 max-w-[100%] bg-white dark:bg-gray-800 z-10">
+            <div className="h-14 border-b bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 items-center flex px-4 gap-2">
+              <Link href={`/`}>
+                <a
+                  className="text-lg font-bold uppercase flex-1 truncate"
+                  onClick={() => setShowSidebar(false)}
+                >
+                  {TITLE}
+                </a>
+              </Link>
+
+              <button
                 onClick={() => setShowSidebar(false)}
+                className="w-10 h-10 rounded-md hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-700 dark:active:bg-gray-600 flex items-center justify-center"
               >
-                {TITLE}
-              </a>
-            </Link>
+                <MdClose className="text-2xl" />
+              </button>
+            </div>
 
-            <button
-              onClick={() => setShowSidebar(false)}
-              className="w-10 h-10 rounded-md hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700 flex items-center justify-center"
-            >
-              <MdClose className="text-2xl" />
-            </button>
+            <ul className="flex flex-col p-3">
+              {menuItems.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}>
+                    <a
+                      className={classNames(
+                        "px-3 py-2 flex w-full items-center rounded-md gap-3",
+                        {
+                          "bg-primary-500 text-gray-50": item.isActive,
+                          "hover:text-gray-600 dark:hover:text-gray-300":
+                            !item.isActive,
+                        }
+                      )}
+                      onClick={() => setShowSidebar(false)}
+                    >
+                      <p className="flex-1 line-clamp-1">{item.label}</p>
+                      <MdChevronRight className="text-2xl" />
+                    </a>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-
-          <ul className="flex flex-col p-4">
-            {menuItems.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href}>
-                  <a
-                    className={classNames(
-                      "px-4 flex w-full py-3 items-center rounded-md",
-                      {
-                        "bg-primary-500 dark:bg-primary-400 text-gray-50 dark:text-gray-900":
-                          item.isActive,
-                        "hover:text-gray-600 dark:hover:text-gray-300":
-                          !item.isActive,
-                      }
-                    )}
-                    onClick={() => setShowSidebar(false)}
-                  >
-                    <p className="flex-1">{item.label}</p>
-                    <MdChevronRight className="text-2xl" />
-                  </a>
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
-      </div>
+      )}
     </>
   );
 };

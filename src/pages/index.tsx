@@ -1,10 +1,20 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { CustomNextPage } from "@/types/next";
 
-const Home: CustomNextPage = () => {
-  return <div>Hello world</div>;
+const HomePage: CustomNextPage = () => {
+  return (
+    <div>
+      {new Array(100).fill("1").map((_, index) => (
+        <p key={index}>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci
+          numquam perspiciatis possimus quisquam praesentium fugiat, vitae
+          suscipit necessitatibus aliquam quia?
+        </p>
+      ))}
+    </div>
+  );
 };
 
-Home.getLayout = (page) => <DefaultLayout>{page}</DefaultLayout>;
+HomePage.getLayout = (page) => <DefaultLayout>{page}</DefaultLayout>;
 
-export default Home;
+export default HomePage;

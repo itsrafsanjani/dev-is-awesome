@@ -1,5 +1,5 @@
 import Spotlight from "@/components/Spotlgiht/Spotlight";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { createContext, ReactNode, useCallback, useState } from "react";
 
 type SpotlightContextType = {
@@ -24,6 +24,28 @@ export const SpotlightProvider = ({ children }: { children: ReactNode }) => {
     if (!isVisible) return;
     setIsVisible(false);
   }, [isVisible]);
+
+  const onKeyDown = useCallback(
+    (ev: KeyboardEvent) => {
+      if (isVisible) return;
+
+      if (ev.code === "KeyK" && ev.metaKey) {
+        ev.preventDefault();
+        setIsVisible(true);
+      } else if (ev.code === "Slash") {
+        ev.preventDefault();
+        setIsVisible(true);
+      }
+    },
+    [isVisible]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
 
   return (
     <SpotlightContext.Provider
