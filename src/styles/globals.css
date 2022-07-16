@@ -5,3 +5,7 @@
 body {
   @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-50;
 }
+
+.dark {
+  color-scheme: dark;
+}

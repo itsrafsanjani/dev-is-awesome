@@ -16,7 +16,7 @@ const PageNotFound: CustomNextPage = () => {
       </p>
 
       <Link href={"/"}>
-        <a className="text-indigo-500 dark:text-indigo-400 text-lg md:text-xl font-medium p-4 hover:underline">
+        <a className="text-primary-500 dark:text-primary-400 text-lg md:text-xl font-medium p-4 hover:underline">
           Go Back Home
         </a>
       </Link>

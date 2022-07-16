@@ -9,8 +9,10 @@ import {
   MdDarkMode,
   MdLightMode,
   MdMenu,
+  MdSearch,
 } from "react-icons/md";
-import { useColorScheme } from "@/contexts/ColorScheme";
+import { useColorScheme } from "@/contexts/ColorSchemeContext";
+import { useSpotlight } from "@/contexts/SportlightContext";
 
 type MenuItem = {
   label: string;
@@ -23,6 +25,7 @@ const TITLE = "DEV IS AWESOME";
 const NavBar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { toggleColorScheme, colorScheme } = useColorScheme();
+  const { openSpotlight } = useSpotlight();
   const router = useRouter();
 
   const menuItems = useMemo((): MenuItem[] => {
@@ -63,7 +66,7 @@ const NavBar = () => {
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setShowSidebar(true)}
-            className="w-10 h-10 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center md:hidden"
+            className="w-10 h-10 rounded-md hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700 flex items-center justify-center md:hidden"
           >
             <MdMenu className="text-2xl" />
           </button>
@@ -80,9 +83,10 @@ const NavBar = () => {
             <li key={item.href}>
               <Link href={item.href}>
                 <a
-                  className={classNames("font-medium", {
-                    "": item.isActive,
-                    "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50":
+                  className={classNames("", {
+                    "text-primary-500 dark:text-primary-400 py-3":
+                      item.isActive,
+                    "hover:text-gray-600 dark:hover:text-gray-300":
                       !item.isActive,
                   })}
                 >
@@ -94,26 +98,39 @@ const NavBar = () => {
         </ul>
 
         {/* Navbar Actions */}
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-2">
           {/* Color Schmee Toggle Button */}
-          <button
-            onClick={toggleColorScheme}
-            className="w-10 h-10 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center"
-          >
-            {colorScheme === "system" ? (
-              <MdComputer className="text-2xl" />
-            ) : colorScheme === "light" ? (
-              <MdLightMode className="text-2xl" />
-            ) : (
-              <MdDarkMode className="text-2xl" />
-            )}
-          </button>
+          {[
+            {
+              icon: <MdSearch className="text-2xl" />,
+              onClick: openSpotlight,
+            },
+            {
+              icon:
+                colorScheme === "system" ? (
+                  <MdComputer className="text-2xl" />
+                ) : colorScheme === "light" ? (
+                  <MdLightMode className="text-2xl" />
+                ) : (
+                  <MdDarkMode className="text-2xl" />
+                ),
+              onClick: toggleColorScheme,
+            },
+          ].map((item, index) => (
+            <button
+              key={index}
+              onClick={item.onClick}
+              className="w-10 h-10 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 flex items-center justify-center"
+            >
+              {item.icon}
+            </button>
+          ))}
         </div>
       </nav>
 
       {/* SideBar */}
       <div
-        className={classNames("fixed inset-0 z-50", {
+        className={classNames("fixed inset-0 z-30", {
           "pointer-events-none": !showSidebar,
         })}
       >
@@ -123,11 +140,6 @@ const NavBar = () => {
             "backdrop-blur-md bg-black/50": showSidebar,
             "backdrop-blur-none bg-black/0": !showSidebar,
           })}
-          style={{
-            transitionProperty: "backdrop-filter, background-color",
-            transitionDuration: "150ms",
-            transitionTimingFunction: "ease-in-out",
-          }}
           onClick={() => setShowSidebar(false)}
         />
         {/* Drawer */}
@@ -139,11 +151,6 @@ const NavBar = () => {
               "-left-80": !showSidebar,
             }
           )}
-          style={{
-            transitionProperty: "left",
-            transitionDuration: "150ms",
-            transitionTimingFunction: "ease-in-out",
-          }}
         >
           <div className="h-14 border-b bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 items-center flex px-4">
             <Link href={`/`}>
@@ -157,13 +164,13 @@ const NavBar = () => {
 
             <button
               onClick={() => setShowSidebar(false)}
-              className="w-10 h-10 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center"
+              className="w-10 h-10 rounded-md hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700 flex items-center justify-center"
             >
               <MdClose className="text-2xl" />
             </button>
           </div>
 
-          <ul className="flex flex-col p-4 gap-1">
+          <ul className="flex flex-col p-4">
             {menuItems.map((item) => (
               <li key={item.href}>
                 <Link href={item.href}>
@@ -171,15 +178,16 @@ const NavBar = () => {
                     className={classNames(
                       "px-4 flex w-full py-3 items-center rounded-md",
                       {
-                        "bg-gray-100 dark:bg-gray-800": item.isActive,
-                        "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-800":
+                        "bg-primary-500 dark:bg-primary-400 text-gray-50 dark:text-gray-900":
+                          item.isActive,
+                        "hover:text-gray-600 dark:hover:text-gray-300":
                           !item.isActive,
                       }
                     )}
                     onClick={() => setShowSidebar(false)}
                   >
-                    <p className="flex-1 font-medium">{item.label}</p>
-                    <MdChevronRight className="text-2xl text-gray-600 dark:text-gray-400" />
+                    <p className="flex-1">{item.label}</p>
+                    <MdChevronRight className="text-2xl" />
                   </a>
                 </Link>
               </li>
