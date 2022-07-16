@@ -185,7 +185,7 @@ const Spotlight = () => {
 
   const scrollToSelectedItem = useCallback(
     (index: number) => {
-      const offest = 12;
+      const offest = 16;
       if (scrollRef.current) {
         const item = document.getElementById(`search-item-${index}`);
         if (!item) return;
@@ -357,6 +357,7 @@ const Spotlight = () => {
               autoCorrect="off"
               autoComplete="off"
               spellCheck={false}
+              maxLength={80}
             />
             <button
               onClick={closeSpotlight}
@@ -370,13 +371,20 @@ const Spotlight = () => {
               <div className="p-8 text-center items-center justify-center flex flex-col gap-4 text-gray-500 dark:text-gray-400">
                 <MdSearch className="text-7xl" />
                 <span className="text-lg">
-                  {!searchText
-                    ? "Search results will show up here."
-                    : "No results found for your search"}
+                  {!searchText ? (
+                    <span>Search results will show up here.</span>
+                  ) : (
+                    <span>
+                      No results for{" "}
+                      <span className="font-medium text-gray-900 dark:text-gray-50">
+                        &apos;{searchText}&apos;
+                      </span>
+                    </span>
+                  )}
                 </span>
               </div>
             ) : (
-              <div className="p-3">
+              <div className="p-4">
                 {[...searchResultsWithSections].map((item) => {
                   const category = item[0];
                   const results = item[1];
@@ -385,7 +393,7 @@ const Spotlight = () => {
                       <div className="flex items-center mb-4">
                         <h3>{category.name}</h3>
                       </div>
-                      <ul role="listbox" className="flex flex-col gap-3">
+                      <ul role="listbox" className="flex flex-col gap-2">
                         {results.map((item) => {
                           const index = searchResults.indexOf(item);
                           const isSelected = selectedIndex === index;
@@ -400,6 +408,7 @@ const Spotlight = () => {
                               {item.type === "link" ? (
                                 <Link href={item.href}>
                                   <a
+                                    tabIndex={-1}
                                     onFocus={() => setSelectedIndex(index)}
                                     target={
                                       item.isExternal ? "_blank" : undefined
@@ -414,6 +423,7 @@ const Spotlight = () => {
                                 </Link>
                               ) : item.type === "button" ? (
                                 <button
+                                  tabIndex={-1}
                                   className="w-full text-start"
                                   onFocus={() => setSelectedIndex(index)}
                                   onClick={() => {
@@ -437,7 +447,7 @@ const Spotlight = () => {
               </div>
             )}
           </div>
-          <div className="h-12 border-t border-gray-100 dark:border-gray-700"></div>
+          {/* <div className="h-12 border-t border-gray-100 dark:border-gray-700"></div> */}
         </div>
       </div>
     </div>
@@ -455,7 +465,7 @@ const SearchItemRow = ({
 }) => (
   <div
     className={classNames(
-      "p-3 rounded-lg items-center flex w-full text-start gap-3",
+      "px-4 py-2 rounded-lg items-center flex w-full text-start gap-4",
       {
         "bg-primary-500 text-gray-50": isSelected,
         "bg-gray-100 dark:bg-gray-700": !isSelected,
@@ -471,7 +481,7 @@ const SearchItemRow = ({
     >
       <MdTag className="text-xl" />
     </div>
-    <div className="flex-1 flex flex-col items-start gap-1">
+    <div className="flex-1 flex flex-col items-start">
       <span className="line-clamp-1">{data.title}</span>
       {data.desc && (
         <span
@@ -492,9 +502,9 @@ const SearchItemRow = ({
         })}
       >
         {data.isExternal ? (
-          <MdOpenInNew className="text-xl" />
+          <MdOpenInNew className="text-2xl" />
         ) : (
-          <MdChevronRight className="text-xl" />
+          <MdChevronRight className="text-2xl" />
         )}
       </div>
     )}

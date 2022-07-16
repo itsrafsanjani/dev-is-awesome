@@ -1,5 +1,5 @@
 import Spotlight from "@/components/Spotlgiht/Spotlight";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { createContext, ReactNode, useCallback, useState } from "react";
 
 type SpotlightContextType = {
@@ -14,16 +14,44 @@ export const SpotlightContext = createContext<SpotlightContextType | null>(
 
 export const SpotlightProvider = ({ children }: { children: ReactNode }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const chagneContentFocus = useCallback(
+    (shouldFocusable: boolean) => {
+      if (!contentRef.current) return;
+      const childs = getFocusableElements(contentRef.current);
+      childs.forEach((child) => {
+        if (shouldFocusable) {
+          const tabindex = child.getAttribute("data-tabindex");
+          if (tabindex) {
+            child.setAttribute("tabindex", tabindex);
+          } else {
+            child.removeAttribute("tabindex");
+          }
+          child.removeAttribute("data-tabindex");
+        } else {
+          const tabindex = child.getAttribute("tabindex");
+          if (tabindex) {
+            child.setAttribute("data-tabindex", tabindex);
+          }
+          child.setAttribute("tabindex", "-1");
+        }
+      });
+    },
+    [contentRef]
+  );
 
   const openSpotlight = useCallback(() => {
     if (isVisible) return;
     setIsVisible(true);
-  }, [isVisible]);
+    chagneContentFocus(false);
+  }, [isVisible, chagneContentFocus]);
 
   const closeSpotlight = useCallback(() => {
     if (!isVisible) return;
     setIsVisible(false);
-  }, [isVisible]);
+    chagneContentFocus(true);
+  }, [isVisible, chagneContentFocus]);
 
   const onKeyDown = useCallback(
     (ev: KeyboardEvent) => {
@@ -31,13 +59,13 @@ export const SpotlightProvider = ({ children }: { children: ReactNode }) => {
 
       if (ev.code === "KeyK" && ev.metaKey) {
         ev.preventDefault();
-        setIsVisible(true);
+        openSpotlight();
       } else if (ev.code === "Slash") {
         ev.preventDefault();
-        setIsVisible(true);
+        openSpotlight();
       }
     },
-    [isVisible]
+    [isVisible, openSpotlight]
   );
 
   useEffect(() => {
@@ -51,7 +79,7 @@ export const SpotlightProvider = ({ children }: { children: ReactNode }) => {
     <SpotlightContext.Provider
       value={{ isVisible, openSpotlight, closeSpotlight }}
     >
-      {children}
+      <div ref={contentRef}>{children}</div>
       {isVisible && <Spotlight />}
     </SpotlightContext.Provider>
   );
@@ -65,4 +93,13 @@ export const useSpotlight = () => {
   }
 
   return context;
+};
+
+const getFocusableElements = (node: HTMLElement) => {
+  return [
+    ...node.querySelectorAll("a"),
+    ...node.querySelectorAll("button"),
+    ...node.querySelectorAll("input"),
+    ...node.querySelectorAll("[tabindex]"),
+  ];
 };
