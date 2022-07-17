@@ -6,6 +6,7 @@ import { tagList } from "@/data/tag-list";
 import { GetStaticProps } from "next";
 import { ITag } from "@/types/tag";
 import Tag from "@/components/Tag/Tag";
+import PageHeader from "@/components/PageHeader/PageHeader";
 
 type Props = {
   tags: ITag[];
@@ -13,16 +14,19 @@ type Props = {
 
 const TagsPage: CustomNextPage<Props> = ({ tags }) => {
   return (
-    <Container>
-      <header className="py-16 text-center">
-        <h1 className="text-3xl font-bold">All Tags</h1>
-        <div className="flex flex-row flex-wrap gap-2 items-center justify-center mt-4">
+    <>
+      <PageHeader
+        title="All Tags"
+        desc="Explore all of this site's content by tags."
+      />
+      <Container className="my-16 max-w-4xl">
+        <div className="flex flex-row flex-wrap gap-2">
           {tags.map((tag) => (
             <Tag key={tag.id} tag={tag} />
           ))}
         </div>
-      </header>
-    </Container>
+      </Container>
+    </>
   );
 };
 

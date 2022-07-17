@@ -46,7 +46,7 @@ const navigationSearches: SearchResult[] = links.map<SearchResult>((item) => ({
 
 const tagSearches: SearchResult[] = tagList.map<SearchResult>((item) => ({
   type: "link",
-  title: `#${item.name}`,
+  title: `#${item.id}`,
   id: item.id,
   category: searchCategories.get(TAGS_CATEGORY)!,
   href: `/tags/${item.id}`,

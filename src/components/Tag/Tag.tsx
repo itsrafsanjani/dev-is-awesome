@@ -20,8 +20,7 @@ const Tag: FC<TagProps> = ({ tag, isActive }) => {
               !isActive,
           })}
         >
-          <span className="opacity-50">#</span>
-          {tag.name}
+          #{tag.id}
         </div>
       </a>
     </Link>

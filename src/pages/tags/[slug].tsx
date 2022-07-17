@@ -1,5 +1,6 @@
 import Container from "@/components/Container";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import PageHeader from "@/components/PageHeader/PageHeader";
 import { tagList } from "@/data/tag-list";
 import { CustomNextPage } from "@/types/next";
 import { ITag } from "@/types/tag";
@@ -12,14 +13,10 @@ type Props = {
 
 const TagDetailPage: CustomNextPage<Props> = ({ tag }) => {
   return (
-    <Container>
-      <header className="my-16 text-center">
-        <h1 className="text-3xl font-bold text-center">#{tag.name}</h1>
-        {!!tag.desc && (
-          <p className="mt-4 text-gray-600 dark:text-gray-300">{tag.desc}</p>
-        )}
-      </header>
-    </Container>
+    <>
+      <PageHeader title={tag.name} desc={`#${tag.id}`} />
+      <Container className="my-16">{tag.name}</Container>
+    </>
   );
 };
 

@@ -3,7 +3,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { CustomNextPage } from "@/types/next";
 
 const HomePage: CustomNextPage = () => {
-  return <Container>Hello world</Container>;
+  return <Container className="my-16">Hello world</Container>;
 };
 
 HomePage.getLayout = (page) => <DefaultLayout>{page}</DefaultLayout>;
