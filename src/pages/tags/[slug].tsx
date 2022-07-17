@@ -14,7 +14,14 @@ type Props = {
 const TagDetailPage: CustomNextPage<Props> = ({ tag }) => {
   return (
     <>
-      <PageHeader title={tag.name} desc={`#${tag.id}`} />
+      <PageHeader
+        title={tag.name}
+        desc={`#${tag.id}`}
+        style={{
+          backgroundColor: tag.bgColor,
+          color: tag.fgColor,
+        }}
+      />
       <Container className="my-16">{tag.name}</Container>
     </>
   );

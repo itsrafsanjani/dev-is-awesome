@@ -15,8 +15,7 @@ import { useColorScheme } from "@/contexts/ColorSchemeContext";
 import { useSpotlight } from "@/contexts/SportlightContext";
 import { MenuItem } from "@/types/menu-item";
 import { navigationLinks } from "@/data/navigation-links";
-
-const TITLE = "Dev Is Awesome";
+import { SITE_INFO } from "@/constants/site";
 
 const NavBar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -51,7 +50,9 @@ const NavBar = () => {
 
           {/* Navbar Logo */}
           <Link href={`/`}>
-            <a className="text-lg font-bold uppercase truncate">{TITLE}</a>
+            <a className="text-lg font-bold uppercase truncate">
+              {SITE_INFO.title}
+            </a>
           </Link>
         </div>
 
@@ -122,7 +123,7 @@ const NavBar = () => {
                   className="text-lg font-bold uppercase flex-1 truncate"
                   onClick={() => setShowSidebar(false)}
                 >
-                  {TITLE}
+                  {SITE_INFO.title}
                 </a>
               </Link>
 

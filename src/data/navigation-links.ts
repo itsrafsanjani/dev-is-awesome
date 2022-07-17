@@ -17,8 +17,4 @@ export const navigationLinks: MenuItem[] = [
     label: "Tags",
     href: "/tags",
   },
-  {
-    label: "Newsletter",
-    href: "/newsletter",
-  },
 ];

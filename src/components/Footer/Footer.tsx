@@ -1,3 +1,4 @@
+import { SITE_INFO } from "@/constants/site";
 import { MenuItem } from "@/types/menu-item";
 import Link from "next/link";
 import React, { useCallback, useMemo } from "react";
@@ -41,31 +42,52 @@ const Footer = () => {
       <Container>
         <div className="py-16 text-center">
           <Link href={`/`}>
-            <a className="text-xl font-bold uppercase">Dev Is Awesome</a>
+            <a className="text-xl font-bold uppercase">{SITE_INFO.title}</a>
           </Link>
           <p className="text-gray-600 dark:text-gray-300 mt-4">
-            Copyright © 2022 Dev Is Awesome
+            {SITE_INFO.copyRight}
           </p>
 
           <p className="text-gray-600 dark:text-gray-300 mt-1">
-            Created with{" "}
-            <Link href={"https://nextjs.org"}>
-              <a
-                target="_blank"
-                className="font-medium text-gray-900 dark:text-gray-50"
-              >
-                Next.js{" "}
-              </a>
-            </Link>
-            by{" "}
-            <Link href={"https://rohid.dev"}>
-              <a
-                target="_blank"
-                className="font-medium text-gray-900 dark:text-gray-50"
-              >
-                Rohidul Islam
-              </a>
-            </Link>
+            Created{" "}
+            {SITE_INFO.builtWith && SITE_INFO.builtWith.length > 0 && (
+              <span>
+                with{" "}
+                {SITE_INFO.builtWith.map((item, index) => {
+                  return (
+                    <span key={index}>
+                      <Link href={item.name}>
+                        <a
+                          target="_blank"
+                          className="font-medium text-gray-900 dark:text-gray-50 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                          {item.name}
+                        </a>
+                      </Link>
+
+                      {index === SITE_INFO.builtWith.length - 1
+                        ? " "
+                        : index === SITE_INFO.builtWith.length - 2
+                        ? " and "
+                        : ", "}
+                    </span>
+                  );
+                })}
+              </span>
+            )}
+            {SITE_INFO.builtBy && (
+              <span>
+                by{" "}
+                <Link href={SITE_INFO.builtBy.url}>
+                  <a
+                    target="_blank"
+                    className="font-medium text-gray-900 dark:text-gray-50 hover:text-gray-600 dark:hover:text-gray-300"
+                  >
+                    {SITE_INFO.builtBy.name}
+                  </a>
+                </Link>
+              </span>
+            )}
           </p>
         </div>
         <div className="py-8 border-t border-gray-200 dark:border-gray-700">
@@ -74,7 +96,7 @@ const Footer = () => {
               <Link key={item.href} href={item.href}>
                 <a
                   target={item.isExternal ? "_blank" : undefined}
-                  className="hover:text-gray-500 dark:hover:text-gray-400"
+                  className="hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   {item.label}
                 </a>
