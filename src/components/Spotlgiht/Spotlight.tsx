@@ -303,7 +303,7 @@ const Spotlight = () => {
         className="absolute inset-0 bg-gray-300/50 dark:bg-gray-900/50 backdrop-blur-sm"
         onClick={closeSpotlight}
       />
-      <div className="absolute z-10 pt-4 pb-48 md:py-24 px-4 inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute z-10 p-4 md:py-24 inset-0 pointer-events-none overflow-hidden">
         <div className="w-full max-w-full md:max-w-2xl bg-white dark:bg-gray-800 mx-auto pointer-events-auto rounded-xl border-t border-gray-100 dark:border-gray-700 max-h-full overflow-hidden flex flex-col">
           <div className="w-full border-b border-gray-100 dark:border-gray-700 flex items-center px-4 relative">
             <MdSearch className="text-2xl text-gray-500 dark:text-gray-400 absolute left-4 pointer-events-none" />
