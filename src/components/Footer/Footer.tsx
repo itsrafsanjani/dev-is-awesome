@@ -78,14 +78,26 @@ const Footer = () => {
             {SITE_INFO.builtBy && (
               <span>
                 by{" "}
-                <Link href={SITE_INFO.builtBy.url}>
-                  <a
-                    target="_blank"
-                    className="font-medium text-gray-900 dark:text-gray-50 hover:text-gray-600 dark:hover:text-gray-300"
-                  >
-                    {SITE_INFO.builtBy.name}
-                  </a>
-                </Link>
+                {SITE_INFO.builtBy.map((item, index) => {
+                  return (
+                    <span key={index}>
+                      <Link href={item.name}>
+                        <a
+                          target="_blank"
+                          className="font-medium text-gray-900 dark:text-gray-50 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                          {item.name}
+                        </a>
+                      </Link>
+
+                      {index === SITE_INFO.builtBy.length - 1
+                        ? " "
+                        : index === SITE_INFO.builtBy.length - 2
+                        ? " and "
+                        : ", "}
+                    </span>
+                  );
+                })}
               </span>
             )}
           </p>

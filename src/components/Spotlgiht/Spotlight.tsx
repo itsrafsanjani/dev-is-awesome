@@ -9,6 +9,8 @@ import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRef } from "react";
 import { MdChevronRight, MdClose, MdOpenInNew, MdSearch } from "react-icons/md";
+import Bold from "../Atoms/Bold";
+import Text from "../Atoms/Text";
 
 const NAVIGATION_CATEGORY = "navigation-links";
 const BLOGS_CATEGORY = "blogs";
@@ -330,18 +332,15 @@ const Spotlight = () => {
             {searchResults.length === 0 ? (
               <div className="p-8 text-center items-center justify-center flex flex-col gap-4 text-gray-500 dark:text-gray-400">
                 <MdSearch className="text-7xl" />
-                <span className="text-lg">
+                <Text className="text-lg">
                   {!searchText ? (
                     <span>Search results will show up here.</span>
                   ) : (
                     <span>
-                      No results for{" "}
-                      <span className="font-medium text-gray-900 dark:text-gray-50">
-                        &apos;{searchText}&apos;
-                      </span>
+                      No results for <Bold>&apos;{searchText}&apos;</Bold>
                     </span>
                   )}
-                </span>
+                </Text>
               </div>
             ) : (
               <div className="px-4">
