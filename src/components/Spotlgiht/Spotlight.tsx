@@ -1,10 +1,12 @@
 import { useColorScheme } from "@/contexts/ColorSchemeContext";
 import { useSpotlight } from "@/contexts/SportlightContext";
+import { navigationLinks } from "@/data/navigation-links";
+import { tagList } from "@/data/tag-list";
+import { SearchCategory, SearchResult } from "@/types/spotlight-types";
 import classNames from "classnames";
 import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRef } from "react";
-import { useLayoutEffect } from "react";
 import {
   MdChevronRight,
   MdClose,
@@ -13,105 +15,50 @@ import {
   MdTag,
 } from "react-icons/md";
 
-type SearchHistory = {
-  id: string;
-  searchedAt: string;
-  isFavourite?: boolean;
-}[];
-
-type SearchCategory = {
-  name: string;
-};
-
 const NAVIGATION_CATEGORY = "navigation-links";
 const BLOGS_CATEGORY = "blogs";
+const TAGS_CATEGORY = "tags";
 const TUTORIALS_CATEGORY = "tutorials";
 const COURSES_CATEGORY = "courses";
 const ACTIONS_CATEGORY = "actions";
+
 const searchCategories = new Map<string, SearchCategory>([
   [NAVIGATION_CATEGORY, { name: "Navigation" }],
   [BLOGS_CATEGORY, { name: "Blog" }],
   [TUTORIALS_CATEGORY, { name: "Tutorial" }],
   [COURSES_CATEGORY, { name: "Course" }],
   [ACTIONS_CATEGORY, { name: "Actions" }],
+  [TAGS_CATEGORY, { name: "Tags" }],
 ]);
 
-type SearchResultLink = {
-  type: "link";
-  href: string;
-  isExternal?: boolean;
-};
+const navigationSearches: SearchResult[] = navigationLinks.map<SearchResult>(
+  (item) => ({
+    type: "link",
+    title: item.label,
+    category: searchCategories.get(NAVIGATION_CATEGORY)!,
+    href: item.href,
+    id: item.href.split("/")[1],
+    keywords: ["links"],
+  })
+);
 
-type SearchResultButton = {
-  type: "button";
-  onClick: () => void;
-};
+const tagSearches: SearchResult[] = tagList.map<SearchResult>((item) => ({
+  type: "link",
+  title: item.name,
+  id: item.id,
+  category: searchCategories.get(TAGS_CATEGORY)!,
+  href: `/tags/${item.id}`,
+  desc: item.desc,
+  keywords: ["tags", "tag", `#${item.name}`, `#${item.id}`, item.id],
+}));
 
-type SearchResult = {
-  id: string;
-  title: string;
-  desc?: string;
-  category: SearchCategory;
-  keywords?: string[];
-} & (SearchResultLink | SearchResultButton);
-
-const commonNavigationKeywords = ["links"];
-const navigationSearches: SearchResult[] = [
-  {
-    id: "navigation-link-tutorials",
-    title: "Home",
-    desc: "Navigate to home",
-    type: "link",
-    href: "/",
-    category: searchCategories.get(NAVIGATION_CATEGORY)!,
-    keywords: [...commonNavigationKeywords],
-  },
-  {
-    id: "navigation-link-tutorials",
-    title: "Tutorials",
-    desc: "See all Tutorials",
-    type: "link",
-    href: "/tutorials",
-    category: searchCategories.get(NAVIGATION_CATEGORY)!,
-    keywords: [...commonNavigationKeywords],
-  },
-  {
-    id: "navigation-link-courses",
-    title: "Courses",
-    desc: "See all Courses",
-    type: "link",
-    href: "/courses",
-    category: searchCategories.get(NAVIGATION_CATEGORY)!,
-    keywords: [...commonNavigationKeywords],
-  },
-  {
-    id: "navigation-link-tags",
-    title: "Tags",
-    desc: "See all Tags",
-    type: "link",
-    href: "/tags",
-    category: searchCategories.get(NAVIGATION_CATEGORY)!,
-    keywords: [...commonNavigationKeywords],
-  },
-  {
-    id: "navigation-link-newsletter",
-    title: "Newsletter",
-    desc: "Subscribe to newsletter",
-    type: "link",
-    href: "/newsletter",
-    category: searchCategories.get(NAVIGATION_CATEGORY)!,
-    keywords: [...commonNavigationKeywords],
-  },
-];
-
-const predefinedSearchResults = [...navigationSearches];
+const predefinedSearchResults = [...navigationSearches, ...tagSearches];
 
 const Spotlight = () => {
   const { closeSpotlight } = useSpotlight();
   const [searchText, setSearchText] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [recentSearches, setRecentSearches] = useState<SearchHistory>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toggleColorScheme, setColorScheme, colorScheme } = useColorScheme();
 
@@ -286,10 +233,10 @@ const Spotlight = () => {
             .filter(Boolean)
             .forEach((key) => {
               searchKeys.forEach((skey) => {
-                if (key === skey) {
+                if (key.toLocaleLowerCase() === skey) {
                   isDirectMatch = true;
                 }
-                if (key.startsWith(skey)) {
+                if (key.toLocaleLowerCase().startsWith(skey)) {
                   matches++;
                 }
               });
@@ -314,7 +261,7 @@ const Spotlight = () => {
     [actionResults]
   );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     document.documentElement.classList.toggle("overflow-hidden", true);
     return () => {
       document.documentElement.classList.toggle("overflow-hidden", false);

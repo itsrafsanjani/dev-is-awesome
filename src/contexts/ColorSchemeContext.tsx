@@ -3,7 +3,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
-  useLayoutEffect,
+  useEffect,
   useState,
 } from "react";
 
@@ -48,7 +48,7 @@ export const ColorSchemeProvider = ({
       }
     }, [colorScheme]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setIsPrefersDark(window.matchMedia(PREFERS_COLOR_SCHEME_DARK).matches);
     const onColorSchemeChange = (e: MediaQueryListEvent) => {
       setIsPrefersDark(e.matches);
@@ -68,7 +68,7 @@ export const ColorSchemeProvider = ({
     };
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem("color-scheme", colorScheme);
     switch (colorScheme) {
@@ -84,7 +84,7 @@ export const ColorSchemeProvider = ({
     }
   }, [colorScheme, isPrefersDark, isInitialized]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isInitialized) return;
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark, isInitialized]);
@@ -93,7 +93,7 @@ export const ColorSchemeProvider = ({
     <ColorSchemeContext.Provider
       value={{ colorScheme, setColorScheme, toggleColorScheme }}
     >
-      {isInitialized ? children : null}
+      {children}
     </ColorSchemeContext.Provider>
   );
 };

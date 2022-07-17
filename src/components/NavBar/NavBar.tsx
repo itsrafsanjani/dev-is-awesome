@@ -13,14 +13,10 @@ import {
 } from "react-icons/md";
 import { useColorScheme } from "@/contexts/ColorSchemeContext";
 import { useSpotlight } from "@/contexts/SportlightContext";
+import { MenuItem } from "@/types/menu-item";
+import { navigationLinks } from "@/data/navigation-links";
 
-type MenuItem = {
-  label: string;
-  href: string;
-  isActive?: boolean;
-};
-
-const TITLE = "DEV IS AWESOME";
+const TITLE = "Dev Is Awesome";
 
 const NavBar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -30,28 +26,10 @@ const NavBar = () => {
 
   const menuItems = useMemo((): MenuItem[] => {
     const route = router.asPath.split("/")[1];
-    return [
-      {
-        label: "Tutorials",
-        href: "/tutorials",
-        isActive: route === "tutorials",
-      },
-      {
-        label: "Courses",
-        href: "/courses",
-        isActive: route === "courses",
-      },
-      {
-        label: "Tags",
-        href: "/tags",
-        isActive: route === "tags",
-      },
-      {
-        label: "Newsletter",
-        href: "/newsletter",
-        isActive: route === "newsletter",
-      },
-    ];
+    return navigationLinks.map<MenuItem>((item) => ({
+      ...item,
+      isActive: route === item.href.split("/")[1],
+    }));
   }, [router]);
 
   useEffect(() => {
