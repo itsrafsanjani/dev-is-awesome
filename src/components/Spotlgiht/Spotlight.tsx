@@ -2,18 +2,13 @@ import { useColorScheme } from "@/contexts/ColorSchemeContext";
 import { useSpotlight } from "@/contexts/SportlightContext";
 import { navigationLinks } from "@/data/navigation-links";
 import { tagList } from "@/data/tag-list";
+import { MenuItem } from "@/types/menu-item";
 import { SearchCategory, SearchResult } from "@/types/spotlight-types";
 import classNames from "classnames";
 import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRef } from "react";
-import {
-  MdChevronRight,
-  MdClose,
-  MdOpenInNew,
-  MdSearch,
-  MdTag,
-} from "react-icons/md";
+import { MdChevronRight, MdClose, MdOpenInNew, MdSearch } from "react-icons/md";
 
 const NAVIGATION_CATEGORY = "navigation-links";
 const BLOGS_CATEGORY = "blogs";
@@ -31,25 +26,32 @@ const searchCategories = new Map<string, SearchCategory>([
   [TAGS_CATEGORY, { name: "Tags" }],
 ]);
 
-const navigationSearches: SearchResult[] = navigationLinks.map<SearchResult>(
-  (item) => ({
-    type: "link",
-    title: item.label,
-    category: searchCategories.get(NAVIGATION_CATEGORY)!,
-    href: item.href,
-    id: item.href.split("/")[1],
-    keywords: ["links"],
-  })
-);
+const links: MenuItem[] = [
+  ...navigationLinks,
+  {
+    href: "/",
+    label: "Home",
+  },
+];
+
+const navigationSearches: SearchResult[] = links.map<SearchResult>((item) => ({
+  type: "link",
+  title: item.label,
+  desc: `Path '${item.href}'`,
+  category: searchCategories.get(NAVIGATION_CATEGORY)!,
+  href: item.href,
+  id: item.href.split("/")[1],
+  keywords: ["links"],
+}));
 
 const tagSearches: SearchResult[] = tagList.map<SearchResult>((item) => ({
   type: "link",
-  title: item.name,
+  title: `#${item.name}`,
   id: item.id,
   category: searchCategories.get(TAGS_CATEGORY)!,
   href: `/tags/${item.id}`,
-  desc: item.desc,
-  keywords: ["tags", "tag", `#${item.name}`, `#${item.id}`, item.id],
+  desc: `Path '/tags/${item.id}'`,
+  keywords: ["tags", "tag", item.name, item.id],
 }));
 
 const predefinedSearchResults = [...navigationSearches, ...tagSearches];
@@ -67,7 +69,7 @@ const Spotlight = () => {
       {
         id: "actions-toggle-appearance",
         title: "Toggle Appearance",
-        desc: `Current Appearance is "${colorScheme}"`,
+        desc: `Current Appearance is '${colorScheme}'`,
         type: "button",
         onClick: toggleColorScheme,
         category: searchCategories.get(ACTIONS_CATEGORY)!,
@@ -224,8 +226,19 @@ const Spotlight = () => {
         .map((item) => {
           let isDirectMatch = false;
           let matches = 0;
-          const titleKeys = item.title.toLocaleLowerCase().split(" ");
-          const descKeys = item.desc?.toLocaleLowerCase().split(" ") || [];
+          const titleKeys = item.title
+            .toLocaleLowerCase()
+            .replaceAll(`"`, "")
+            .replaceAll(`'`, "")
+            .replaceAll("`", "")
+            .split(" ");
+          const descKeys =
+            item.desc
+              ?.toLocaleLowerCase()
+              .replaceAll(`"`, "")
+              .replaceAll(`'`, "")
+              .replaceAll("`", "")
+              .split(" ") || [];
           const categoryKeys =
             item.category.name.toLocaleLowerCase().split(" ") || [];
           const keywords = item.keywords || [];
@@ -331,12 +344,12 @@ const Spotlight = () => {
                 </span>
               </div>
             ) : (
-              <div className="p-4">
+              <div className="px-4">
                 {[...searchResultsWithSections].map((item) => {
                   const category = item[0];
                   const results = item[1];
                   return (
-                    <section key={category.name} className="my-4">
+                    <section key={category.name} className="my-8">
                       <div className="flex items-center mb-4">
                         <h3>{category.name}</h3>
                       </div>
@@ -412,22 +425,13 @@ const SearchItemRow = ({
 }) => (
   <div
     className={classNames(
-      "px-4 py-2 rounded-lg items-center flex w-full text-start gap-4",
+      "px-4 py-2 rounded-md items-center flex w-full text-start gap-4",
       {
         "bg-primary-500 text-gray-50": isSelected,
         "bg-gray-100 dark:bg-gray-700": !isSelected,
       }
     )}
   >
-    <div
-      className={classNames("p-1 rounded-md selected:bg-red-500", {
-        "bg-primary-400 text-gray-50": isSelected,
-        "bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400":
-          !isSelected,
-      })}
-    >
-      <MdTag className="text-xl" />
-    </div>
     <div className="flex-1 flex flex-col items-start">
       <span className="line-clamp-1">{data.title}</span>
       {data.desc && (
