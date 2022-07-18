@@ -5,8 +5,15 @@ import Container from "@/components/Container";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { SITE_INFO } from "@/constants/site";
 import { CustomNextPage } from "@/types/next";
+import { GetStaticProps } from "next";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
-const HomePage: CustomNextPage = () => {
+type Props = {
+  posts: any[];
+};
+
+const HomePage: CustomNextPage<Props> = ({ posts }) => {
+  console.log(posts);
   return (
     <>
       <header className="py-32 lg:py-48 text-center">
@@ -34,3 +41,13 @@ const HomePage: CustomNextPage = () => {
 HomePage.getLayout = (page) => <DefaultLayout>{page}</DefaultLayout>;
 
 export default HomePage;
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const querySnapshot = await getDocs(collection(getFirestore(), "posts"));
+  const posts = querySnapshot.docs.map((doc) => doc.data());
+  return {
+    props: {
+      posts: JSON.parse(JSON.stringify(posts)),
+    },
+  };
+};

@@ -9,6 +9,7 @@ import {
   MdDarkMode,
   MdLightMode,
   MdMenu,
+  MdPerson,
   MdSearch,
 } from "react-icons/md";
 import { useColorScheme } from "@/contexts/ColorSchemeContext";
@@ -16,8 +17,13 @@ import { useSpotlight } from "@/contexts/SportlightContext";
 import { MenuItem } from "@/types/menu-item";
 import { navigationLinks } from "@/data/navigation-links";
 import { SITE_INFO } from "@/constants/site";
+import { getAuth, User } from "firebase/auth";
+import Image from "next/image";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { AuthService } from "@/services/auth-service";
 
 const NavBar = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const { toggleColorScheme, colorScheme } = useColorScheme();
   const { openSpotlight } = useSpotlight();
@@ -31,9 +37,52 @@ const NavBar = () => {
     }));
   }, [router]);
 
+  const userDropdownMenu = useMemo((): IDropDownItem[] => {
+    if (!user) {
+      return [
+        {
+          type: "link",
+          label: "Log In",
+          href: `/login`,
+        },
+        {
+          type: "link",
+          label: "Sign Up",
+          href: `/login`,
+        },
+      ];
+    }
+    return [
+      {
+        type: "link",
+        label: "Profile",
+        href: `/user/${user.uid}`,
+      },
+      {
+        type: "link",
+        label: "Settings",
+        href: "/settings",
+      },
+      {
+        type: "divider",
+      },
+      {
+        type: "button",
+        label: "Sign Out",
+        onClick: () => {
+          AuthService.signOut();
+        },
+      },
+    ];
+  }, [user]);
+
   useEffect(() => {
     document.documentElement.classList.toggle("overflow-hidden", showSidebar);
   }, [showSidebar]);
+
+  useEffect(() => {
+    return getAuth().onAuthStateChanged((_user) => setUser(_user));
+  }, []);
 
   return (
     <>
@@ -99,11 +148,63 @@ const NavBar = () => {
             <button
               key={index}
               onClick={item.onClick}
-              className="w-10 h-10 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 flex items-center justify-center"
+              className="relative w-10 h-10 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 flex items-center justify-center"
             >
               {item.icon}
             </button>
           ))}
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button className="relative w-10 h-10 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 flex items-center justify-center">
+                {user ? (
+                  <div className="absolute w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    {user.photoURL && (
+                      <Image
+                        src={user.photoURL}
+                        alt="Porfile Photo"
+                        layout="fill"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <MdPerson className="text-2xl" />
+                )}
+              </button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content className="bg-white dark:bg-gray-800 shadow-lg py-2 rounded-md border-t border-gray-100 dark:border-gray-700 w-48 flex flex-col">
+              {userDropdownMenu.map((item, index) => {
+                if (item.type === "link")
+                  return (
+                    <DropdownMenu.DropdownMenuItem asChild key={index}>
+                      <a
+                        href={item.href}
+                        className="py-2 px-4 focus:bg-gray-100 dark:focus:bg-gray-700 w-full text-start outline-none"
+                      >
+                        {item.label}
+                      </a>
+                    </DropdownMenu.DropdownMenuItem>
+                  );
+                if (item.type === "button")
+                  return (
+                    <DropdownMenu.DropdownMenuItem asChild key={index}>
+                      <button
+                        key={index}
+                        className="py-2 px-4 focus:bg-gray-100 dark:focus:bg-gray-700  w-full text-start outline-none"
+                        onClick={item.onClick}
+                      >
+                        ={item.label}
+                      </button>
+                    </DropdownMenu.DropdownMenuItem>
+                  );
+                return (
+                  <div
+                    key={index}
+                    className="h-px w-full bg-gray-100 dark:bg-gray-700 my-2"
+                  />
+                );
+              })}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         </div>
       </nav>
 
@@ -165,3 +266,20 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+type Divider = {
+  type: "divider";
+};
+
+type IDropDownButtonItem = {
+  type: "button";
+  onClick: () => void;
+  label: string;
+};
+type IDropDownLinkItem = {
+  type: "link";
+  href: string;
+  label: string;
+};
+
+type IDropDownItem = Divider | IDropDownButtonItem | IDropDownLinkItem;
