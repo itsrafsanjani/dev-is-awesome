@@ -192,7 +192,7 @@ const NavBar = () => {
                         className="py-2 px-4 focus:bg-gray-100 dark:focus:bg-gray-700  w-full text-start outline-none"
                         onClick={item.onClick}
                       >
-                        ={item.label}
+                        {item.label}
                       </button>
                     </DropdownMenu.DropdownMenuItem>
                   );
