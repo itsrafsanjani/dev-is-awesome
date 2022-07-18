@@ -1,17 +1,17 @@
-import { Tag } from "@prisma/client";
+import { ITag } from "@/types/tag";
 import classNames from "classnames";
 import Link from "next/link";
 import React from "react";
 import { FC } from "react";
 
 export type TagProps = {
-  tag: Tag;
+  tag: ITag;
   isActive?: boolean;
 };
 
 const TagItem: FC<TagProps> = ({ tag, isActive }) => {
   return (
-    <Link href={`/tags/${tag.tag}`}>
+    <Link href={`/tags/${tag.id}`}>
       <a
         className={classNames("px-3 py-2 rounded-md font-bold font-mono", {
           "bg-primary-500 text-gray-50": isActive,
@@ -24,7 +24,7 @@ const TagItem: FC<TagProps> = ({ tag, isActive }) => {
           color: tag.fgColor || undefined,
         }}
       >
-        #{tag.tag}
+        #{tag.id}
       </a>
     </Link>
   );
